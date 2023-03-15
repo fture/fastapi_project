@@ -8,6 +8,29 @@ import re
 from .validate_funtions import validate_email
 
 
+class UserBase(BaseModel):
+    email: str
+    password: str
+
+
+class UserCreate(BaseModel):
+    id: UUID
+    email: str
+    created_at: datetime
+
+
+class User(UserCreate):
+    pass
+
+    class Config:
+        orm_mode = True
+
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+
 class PostBase(BaseModel):
     title: str
     content: str
@@ -18,28 +41,11 @@ class Post(BaseModel):
     title: str
     content: str
     published: bool
+    owner_email: str
+    owner: User
 
     class Config:
         orm_mode = True
-
-
-class UserBase(BaseModel):
-    email: str
-    password: str
-
-
-class User(BaseModel):
-    id: UUID
-    email: str
-    created_at: datetime
-
-    class Config:
-        orm_mode = True
-
-
-class UserLogin(BaseModel):
-    email: str
-    password: str
 
 
 class Token(BaseModel):
