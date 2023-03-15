@@ -1,9 +1,11 @@
 from typing import List
 from fastapi import Depends, FastAPI, HTTPException, status
-from .database import Base, get_db, engine
-
+from .database import Base, engine
+from .config import settings
 
 from .routers import post, user, auth
+
+
 
 Base.metadata.create_all(bind=engine)
 

@@ -1,6 +1,14 @@
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, events
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    Boolean,
+    ForeignKey,
+    events,
+    PrimaryKeyConstraint,
+)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
@@ -23,11 +31,11 @@ class Post(Base):
     created_at = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
     )
-    # owner_id = Column(
-    #     Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
-    # )
-
-    # owner = relationship("User")
+    owner_id = Column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    owner_email = Column(String, nullable=False)
+    owner = relationship("User")
 
 
 class User(Base):
