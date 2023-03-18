@@ -2,9 +2,11 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 from fastapi import HTTPException
-from pydantic import BaseModel, EmailStr, SecretStr, validator
+from pydantic import BaseModel, EmailStr, SecretStr, conint, validator
 
 import re
+
+
 from .validate_funtions import validate_email
 
 
@@ -13,14 +15,10 @@ class UserBase(BaseModel):
     password: str
 
 
-class UserCreate(BaseModel):
+class User(BaseModel):
     id: UUID
     email: str
     created_at: datetime
-
-
-class User(UserCreate):
-    pass
 
     class Config:
         orm_mode = True
@@ -37,12 +35,19 @@ class PostBase(BaseModel):
     published: bool = True
 
 
-class Post(BaseModel):
-    title: str
-    content: str
-    published: bool
-    owner_email: str
+class Post(PostBase):
+    id: UUID
+    created_at: datetime
+    owner_id: int
     owner: User
+
+    class Config:
+        orm_mode = True
+
+
+class PostOut(BaseModel):
+    Post: Post
+    votes: int
 
     class Config:
         orm_mode = True
@@ -56,3 +61,10 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     id: Optional[UUID] = None
     email: Optional[EmailStr] = None
+
+
+class Vote(BaseModel):
+    post_id: str
+    like: bool
+    comment: Optional[str] = None
+    dir: conint(le=1)

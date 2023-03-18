@@ -1,4 +1,6 @@
 from typing import List, Optional
+
+from sqlalchemy import func
 from .. import models, schemas, validate_funtions, oauth2
 from fastapi import Depends, HTTPException, status, APIRouter, Response
 from ..database import get_db
@@ -9,7 +11,7 @@ from sqlalchemy.orm import Session
 router = APIRouter(prefix="/posts", tags=["posts"])
 
 
-@router.get("/", status_code=status.HTTP_200_OK, response_model=List[schemas.Post])
+@router.get("/", status_code=status.HTTP_200_OK, response_model=List[schemas.PostOut])
 async def read_posts(
     db: Session = Depends(get_db),
     current_user: str = Depends(oauth2.get_current_user),
@@ -18,13 +20,14 @@ async def read_posts(
     serch: Optional[str] = "",
 ):
     posts = (
-        db.query(models.Post)
+        db.query(models.Post, func.count(models.Vote.post_id).label("votes"))
+        .join(models.Vote, models.Vote.post_id == models.Post.id, isouter=True)
+        .group_by(models.Post.id)
         .filter(models.Post.title.contains(serch))
         .limit(limit)
         .offset(skip)
         .all()
     )
-
     return posts
 
 
@@ -48,10 +51,16 @@ async def create_post(
     return new_post
 
 
-@router.get("/{posts_id}", status_code=status.HTTP_200_OK, response_model=schemas.Post)
+@router.get("/{posts_id}", status_code=status.HTTP_200_OK, response_model=schemas.PostOut)
 async def read_post(posts_id: str, db: Session = Depends(get_db)):
     validate_funtions.validate_uuid(posts_id)
-    target_post = db.query(models.Post).filter(models.Post.id == posts_id).first()
+    target_post = (
+        db.query(models.Post, func.count(models.Vote.post_id).label("votes"))
+        .join(models.Vote, models.Vote.post_id == models.Post.id, isouter=True)
+        .group_by(models.Post.id)
+        .filter(models.Post.id == posts_id)
+        .first()
+    )
 
     if not target_post:
         raise HTTPException(

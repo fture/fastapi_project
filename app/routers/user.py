@@ -1,6 +1,6 @@
 from .. import models, utils, schemas, validate_funtions
 from fastapi import Depends, FastAPI, HTTPException, status, APIRouter
-from ..database import Base, get_db, engine
+from ..database import get_db
 from uuid import uuid4
 from sqlalchemy.orm import Session
 

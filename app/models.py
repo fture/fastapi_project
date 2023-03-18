@@ -7,6 +7,7 @@ from sqlalchemy import (
     Boolean,
     ForeignKey,
     events,
+    Text,
     PrimaryKeyConstraint,
 )
 from sqlalchemy.orm import relationship
@@ -51,3 +52,21 @@ class User(Base):
     created_at = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
     )
+
+
+class Vote(Base):
+    __tablename__ = "votes"
+    post_id = Column(
+        UUID(as_uuid=True), ForeignKey("posts.id", ondelete="CASCADE"), nullable=False
+    )
+    user_id = Column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    PrimaryKeyConstraint(post_id, user_id, name="vote_pk")
+    like = Column(Boolean, nullable=False, server_default="FALSE")
+    vote_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    )
+    comment = Column(Text, nullable=True, server_default="FALSE")
+    owner = relationship("User")
+    owner_post = relationship("Post")
