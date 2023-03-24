@@ -13,6 +13,7 @@ from .validate_funtions import validate_email
 class UserBase(BaseModel):
     email: str
     password: str
+    
 
 
 class User(BaseModel):
