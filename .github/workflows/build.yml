@@ -3,21 +3,20 @@ name : Build and Deploy Code
 on: [ push, pull_request ]
 
 jobs:
-  job1: 
+  build: 
     environment: 
       name : test
     env:
-    DATABASE_NAME : ${{secrets.DATABASE_NAME}}
-    DATABASE_PORT : ${{secrets.DATABASE_PORT}}
-    DATABASE_USERNAME : ${{secrets.DATABASE_USERNAME}}
-    DATABASE_PASSWORD : ${{secrets.DATABASE_PASSWORD}}
-    DATABASE_HOSTNAME : ${{secrets.DATABASE_HOSTNAME}}
-    SECRET_KEY : ${{secrets.SECRET_KEY}}
-    ALGORITHM_KEY : ${{secrets.ALGORITHM_KEY}}
-    ACCRESS_TOKEN_EXPIRE_MINUTES : ${{secrets.ACCRESS_TOKEN_EXPIRE_MINUTES}}  
+      DATABASE_NAME : ${{secrets.DATABASE_NAME}}
+      DATABASE_PORT : ${{secrets.DATABASE_PORT}}
+      DATABASE_USERNAME : ${{secrets.DATABASE_USERNAME}}
+      DATABASE_PASSWORD : ${{secrets.DATABASE_PASSWORD}}
+      DATABASE_HOSTNAME : ${{secrets.DATABASE_HOSTNAME}}
+      SECRET_KEY : ${{secrets.SECRET_KEY}}
+      ALGORITHM_KEY : ${{secrets.ALGORITHM_KEY}}
+      ACCRESS_TOKEN_EXPIRE_MINUTES : ${{secrets.ACCRESS_TOKEN_EXPIRE_MINUTES}}  
 
 
-  build:
     runs-on: ubuntu-latest
 
     steps:
